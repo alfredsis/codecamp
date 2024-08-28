@@ -1,0 +1,54 @@
+
+Para logear
+{
+    "correo_electronico": "admin@correo.com",        
+    "password": "admin"
+}
+
+
+
+
+# Para crear un usuario
+{
+    "idusuarios": 4185, 
+    "rol_idrol": 310, 
+    "estados_idestados": 205, 
+    "correo_electronico": "correo@correo", 
+    "nombre_completo": "Nombre completo", 
+    "password": " contraseña", 
+    "telefono": " 123456", 
+    "fecha_nacimiento": "2000-01-01" 
+}
+
+
+
+#Para crear una orden
+{
+    "orden": {
+         "idOrden": 7015,
+         "usuarios_idusuarios": 4156,
+         "estados_idestados": 210,       
+         "nombre_completo": "Fernando Hernandez",
+         "direccion": "20 calle 18-03 zona 12",
+         "telefono": "22571497",
+         "correo_electronico": "fernandohernz@correo.com",
+         "fecha_entrega": "2024-08-28"       
+     },
+     "detalles": [
+         {
+             "idOrdenDetalles": 8021,
+             "productos_idProductos": 1026,
+             "cantidad": 3,
+             "precio": 12
+         },
+         {
+             "idOrdenDetalles": 8022,
+             "productos_idProductos": 1030,
+             "cantidad": 2,
+             "precio": 12
+         }
+     ]
+ }
+
+
+ 
