@@ -1,5 +1,6 @@
 const {sequelize} = require('../db');
 const { sql } = require('@sequelize/core');
+const { validarToken } = require('../helpers/generaToken');
 
 
 
@@ -28,6 +29,7 @@ const getProductById = async (req, res) => {
       const { id } = req.params;
 
       const [producto] = await sequelize.query(sql`SELECT * FROM Productos WHERE idProductos = ${id}`);
+      console.log(producto[0].nombre);
 
       if (producto.length > 0) {
           res.json(producto[0]);
@@ -48,32 +50,33 @@ const createProduct = async(req, res) => {
 
     try {
         const {
-            idProductos,
-            CategoriaProductos_idCategoriaProductos,
-            usuarios_idusuarios,
+            
+            CategoriaProductos_idCategoriaProductos,           
             nombre,
             marca,
             codigo,
             stock,
             estados_idestados,
-            precio,
-            fecha_creacion,
+            precio,           
             foto
           } = req.body;
+
+          const token = req.headers.authorization.split(' ').pop();
+          const {userid} = await validarToken(token);
+        
         
           const result = await sequelize.query(sql`
             EXEC insertarProductos
-            ${idProductos},
+           
             ${CategoriaProductos_idCategoriaProductos},
-            ${usuarios_idusuarios},
+            ${userid},
             ${nombre},
             ${marca},
             ${codigo},
             ${stock},
-            ${estados_idestados},
-            ${precio},
-            ${fecha_creacion},
-            ${foto}
+            ${estados_idestados !== undefined ? estados_idestados : null},        
+            ${precio},           
+            ${foto !== undefined ? foto : null}     
           `);
 
         
@@ -96,30 +99,31 @@ const updateProduct = async(req, res) => {
     
     const {
         
-        CategoriaProductos_idCategoriaProductos,
-        usuarios_idusuarios,
+        CategoriaProductos_idCategoriaProductos,       
         nombre,
         marca,
         codigo,
         stock,
         estados_idestados,
-        precio,
-        fecha_creacion,
+        precio,       
         foto
       } = req.body;
+
+      const token = req.headers.authorization.split(' ').pop();
+      const {userid} = await validarToken(token);
+
       const result = await sequelize.query(sql`
         EXEC actualizarProductos
         ${id},
         ${CategoriaProductos_idCategoriaProductos},
-        ${usuarios_idusuarios},
+        ${userid},
         ${nombre},
         ${marca},
         ${codigo},
         ${stock},
-        ${estados_idestados},
-        ${precio},
-        ${fecha_creacion},
-        ${foto}
+        ${estados_idestados !== undefined ? estados_idestados : null},        
+        ${precio},           
+        ${foto !== undefined ? foto : null}  
       `);
       
    

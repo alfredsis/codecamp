@@ -48,21 +48,19 @@ const createEstado = async(req, res) => {
 
     try {
         const {
-            idestados,
+         
             nombre,
           } = req.body;
         
           const result = await sequelize.query(sql`
-            insertarEstados
-            ${idestados},
+            insertarEstados     
             ${nombre}
           `);
 
         
         res.send('Estado creado exitosamente');
       } catch (error) {
-        console.log('Error al crear estado: ', error);
-    
+        console.log('Error al crear estado: ', error);  
         
         res.send('Error al crear el estado');
       }

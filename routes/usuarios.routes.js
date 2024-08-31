@@ -6,15 +6,15 @@ const { validarRol } = require('../middleware/rolAuth');
 
 const router = express.Router();
 
-router.get("/usuarios", checkAuth, validarRol([350]), getUsuarios);
+router.get("/usuarios", checkAuth, validarRol(['admin']), getUsuarios);
 
-router.get("/usuarios/:id", checkAuth, validarRol([350]), getUsuarioById);
+router.get("/usuarios/:id", checkAuth, validarRol(['admin']), getUsuarioById);
 
 router.post("/registrar", createUsuarios);
 
 router.post("/login", loginUsuario);
 
 
-router.put("/usuarios/:id", checkAuth, validarRol([350]), updateUsuarios);
+router.put("/usuarios/:id", checkAuth, validarRol(['admin']), updateUsuarios);
 
 module.exports = router;

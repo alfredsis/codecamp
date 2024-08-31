@@ -3,15 +3,16 @@ const { getCategorias, getCategoriaById, createCategoria, updateCategoria } = re
 const { checkAuth } = require('../middleware/auth');
 const { validarRol } = require('../middleware/rolAuth');
 
+
 const router = express.Router();
 
-router.get("/categorias",  checkAuth, validarRol([350]), getCategorias);
+router.get("/categorias",  checkAuth, validarRol(['admin']), getCategorias);
 
-router.get("/categorias/:id",  checkAuth, validarRol([350]), getCategoriaById);
+router.get("/categorias/:id",  checkAuth, validarRol(['admin']), getCategoriaById);
 
-router.post("/categorias", checkAuth, validarRol([350]), createCategoria);
+router.post("/categorias", checkAuth, validarRol(['admin']), createCategoria);
 
 
-router.put("/categorias/:id",  checkAuth, validarRol([350]), updateCategoria);
+router.put("/categorias/:id",  checkAuth, validarRol(['admin']), updateCategoria);
 
 module.exports = router;

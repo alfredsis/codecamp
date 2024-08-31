@@ -1,5 +1,6 @@
 const {sequelize} = require('../db');
-const { sql } = require('@sequelize/core');
+const { sql, QueryTypes } = require('@sequelize/core');
+const { validarToken } = require('../helpers/generaToken');
 
 
 
@@ -47,10 +48,8 @@ const crearOrden = async(req, res) => {
 
     try {
       const {
-        orden: {
-          idOrden, 
-          usuarios_idusuarios, 
-          estados_idestados, 
+        orden: {         
+         
           nombre_completo, 
           direccion, 
           telefono, 
@@ -60,30 +59,63 @@ const crearOrden = async(req, res) => {
         detalles
       } = req.body;
 
-          const fecha_creacion = new Date().toISOString().slice(0, 19).replace('T', ' ');
-          const total_orden = detalles.reduce((acc, detalle) => acc + detalle.cantidad * detalle.precio, 0);
+      const token = req.headers.authorization.split(' ').pop();
+      const {userid} = await validarToken(token);
+
+      let total_orden = 0;
+
+      for (const detalle of detalles) {
+        const { productos_idProductos, cantidad } = detalle;
+
+        // Consultar el precio del producto
+        const [producto] = await sequelize.query(sql`
+            SELECT precio
+            FROM Productos
+            WHERE idProductos = ${productos_idProductos}
+        `, { type: QueryTypes.SELECT });
+
+        const precio = producto.precio;
+        total_orden += cantidad * precio;
+    }
+
+
+
+         
         
-          const insertarOrden = await sequelize.query(sql`
+          const [insertarOrden] = await sequelize.query(sql`
             EXEC insertarOrden
-            ${idOrden}, 
-            ${usuarios_idusuarios}, 
-            ${estados_idestados}, 
-            ${fecha_creacion}, 
+           
+            ${userid}, 
+            ${estados_idestados=4},             
             ${nombre_completo}, 
             ${direccion}, 
             ${telefono}, 
             ${correo_electronico}, 
             ${fecha_entrega}, 
             ${total_orden}
-          `);
+          `, { type:QueryTypes.SELECT });          
+       
+
+          const idOrdenNuevo = insertarOrden.idOrden;
 
           for (const detalle of detalles) {
-            const { idOrdenDetalles, productos_idProductos, cantidad, precio } = detalle;
+            const { productos_idProductos, cantidad} = detalle;
+
+            const [producto] = await sequelize.query(sql`
+              SELECT precio
+              FROM Productos
+              WHERE idProductos = ${productos_idProductos}
+          `, { type: QueryTypes.SELECT });
+
+             
+
+          const precio = producto.precio;
+
+      
             
             const intertarOrdenDetalle = await sequelize.query(sql`
-              EXEC insertarOrdenDetalles
-              ${idOrdenDetalles}, 
-              ${idOrden},    
+              EXEC insertarOrdenDetalles              
+              ${idOrdenNuevo},           
               ${productos_idProductos}, 
               ${cantidad}, 
               ${precio}, 
@@ -91,6 +123,7 @@ const crearOrden = async(req, res) => {
             `);        
              
         }
+
         
           res.status(201).send('Orden creada exitosamente');
       } catch (error) {
@@ -110,9 +143,7 @@ const updateOrden = async(req, res) => {
     
     const {
       orden: {
-          idOrden, 
-          usuarios_idusuarios, 
-          estados_idestados, 
+          estados_idestados,                   
           nombre_completo, 
           direccion, 
           telefono, 
@@ -121,16 +152,18 @@ const updateOrden = async(req, res) => {
       }
   } = req.body;     
 
+  const token = req.headers.authorization.split(' ').pop();
+  const {userid} = await validarToken(token);
+
   const [orden] = await sequelize.query(sql`SELECT total_orden FROM Orden WHERE idOrden = ${id}`);
 
-  const fecha_creacion = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
 
   const insertarOrden = await sequelize.query(sql`
     EXEC actualizarOrden
-    ${idOrden}, 
-    ${usuarios_idusuarios}, 
-    ${estados_idestados}, 
-    ${fecha_creacion}, 
+    ${id}, 
+    ${userid}, 
+    ${estados_idestados !== undefined ? estados_idestados : 4},   
     ${nombre_completo}, 
     ${direccion}, 
     ${telefono}, 

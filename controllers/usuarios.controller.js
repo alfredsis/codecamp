@@ -52,9 +52,8 @@ const createUsuarios = async(req, res) => {
 
     try {
         const {
-            idusuarios, 
-            rol_idrol, 
-            estados_idestados, 
+            
+            rol_idrol,             
             correo_electronico, 
             nombre_completo, 
             password, 
@@ -62,25 +61,24 @@ const createUsuarios = async(req, res) => {
             fecha_nacimiento            
           } = req.body;
           
-          const fecha_creacion = new Date().toISOString().slice(0, 19).replace('T', ' ');
+         
           const passwordHash = await encrypt(password)
         
           const result = await sequelize.query(sql`
-            EXEC insertarUsuarios
-            ${idusuarios},
-            ${rol_idrol},
-            ${estados_idestados},
+            EXEC insertarUsuarios   
+               
+            ${rol_idrol},   
+            ${idEstado = null},        
             ${correo_electronico},
             ${nombre_completo},
             ${passwordHash},
             ${telefono},
-            ${fecha_nacimiento},
-            ${fecha_creacion}
-          `);
+            ${fecha_nacimiento}          
+          `, { type:QueryTypes.SELECT });
 
       
         res.send('Usuario creado exitosamente');
-
+            console.log(result);
 
       } catch (error) {
         console.log('Error al crear el usuario: ', error);  
@@ -96,43 +94,34 @@ const updateUsuarios = async(req, res) => {
   
     const id = req.params.id;
     
-    const {
-        
+    const {        
         rol_idrol, 
         estados_idestados, 
         correo_electronico, 
-        nombre_completo, 
-        password, 
+        nombre_completo,                
         telefono, 
-        fecha_nacimiento,
-        fecha_creacion     
+        fecha_nacimiento       
       } = req.body;      
           
-      const [getPassword] = await sequelize.query(sql`
-        SELECT password FROM Usuarios WHERE idusuarios = ${id}
-      `);
+      // const [getPassword] = await sequelize.query(sql`
+      //   SELECT password FROM Usuarios WHERE idusuarios = ${id}
+      // `);
+      // const pass = getPassword[0].password;
+      // const comparePassword = await comparar(password, pass );
+      //encriptar nueva contraseña
 
-      const pass = getPassword[0].password;
-
-      const comparePassword = await comparar(password, pass );
-
-
-
-      console.log("son iguales? ",comparePassword);
-
-      
+     
 
       const result = await sequelize.query(sql`
-            EXEC actualizarUsuarios
-            ${id},
+            EXEC actualizarUsuarios    
+            ${id},       
             ${rol_idrol},
-            ${estados_idestados},
+            ${estados_idestados !== undefined ? estados_idestados : null},
             ${correo_electronico},
             ${nombre_completo},
-            ${password},
+            ${password = null},
             ${telefono},
-            ${fecha_nacimiento},
-            ${fecha_creacion}
+            ${fecha_nacimiento}          
           `);
       
    

@@ -1,5 +1,6 @@
 const {sequelize} = require('../db');
 const { sql } = require('@sequelize/core');
+const { validarToken } = require('../helpers/generaToken');
 
 
 
@@ -47,21 +48,21 @@ const getCategoriaById = async (req, res) => {
 const createCategoria = async(req, res) => {
 
     try {
-        const {
-            idCategoriaProductos, 
-            usuarios_idusuarios, 
+        const {         
+             
             nombre, 
-            estados_idestados, 
-            fecha_creacion
+            estados_idestados,
+          
           } = req.body;
+
+          const token = req.headers.authorization.split(' ').pop();
+          const {userid} = await validarToken(token);
         
           const result = await sequelize.query(sql`
-            EXEC insertarCategoriaProductos
-            ${idCategoriaProductos},
-            ${usuarios_idusuarios},
-            ${nombre},
-            ${estados_idestados},
-            ${fecha_creacion}
+            EXEC insertarCategoriaProductos            
+            ${userid},
+            ${nombre},           
+            ${estados_idestados !== undefined ? estados_idestados : null}           
           `);
 
         
@@ -81,19 +82,22 @@ const updateCategoria = async(req, res) => {
     const id = req.params.id;
     
     const {  
-        idCategoriaProductos, 
-        usuarios_idusuarios, 
+       
         nombre, 
-        estados_idestados, 
-        fecha_creacion
+        estados_idestados,
+       
       } = req.body;
+
+      const token = req.headers.authorization.split(' ').pop();
+      const {userid} = await validarToken(token);
+    
       const result = await sequelize.query(sql`
         EXEC actualizarCategoriaProductos
-            ${idCategoriaProductos},
-            ${usuarios_idusuarios},
-            ${nombre},
-            ${estados_idestados},
-            ${fecha_creacion}
+            ${id},
+            ${userid},
+            ${nombre !== undefined ? nombre : null},        
+            ${estados_idestados !== undefined ? estados_idestados : null}      
+           
           `);
       
    

@@ -5,7 +5,7 @@ const checkAuth = async( req, res, next) =>{
     try {
         const token = req.headers.authorization.split(' ').pop();
         const tokenData = await validarToken(token);
-        console.log(tokenData);
+       
         if(tokenData.userid){
             next()
         } else {
