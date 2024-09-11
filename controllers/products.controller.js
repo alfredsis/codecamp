@@ -11,7 +11,7 @@ const getProducts = async(req, res) => {
         
     const [productos] = await sequelize.query(sql`SELECT * FROM Productos`);
     res.json(productos);
-    console.log(productos);
+   
 
     } catch(error){
         console.log('Error al obtener productos ', error);
@@ -64,7 +64,7 @@ const createProduct = async(req, res) => {
           const token = req.headers.authorization.split(' ').pop();
           const {userid} = await validarToken(token);
         
-        
+         
           const result = await sequelize.query(sql`
             EXEC insertarProductos
            

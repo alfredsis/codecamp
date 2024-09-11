@@ -74,7 +74,7 @@ const createUsuarios = async(req, res) => {
             ${passwordHash},
             ${telefono},
             ${fecha_nacimiento}          
-          `, { type:QueryTypes.SELECT });
+          `,);
 
       
         res.send('Usuario creado exitosamente');
@@ -151,7 +151,7 @@ const loginUsuario = async(req, res) => {
             return res.status(400).json({ message: 'Correo electronico y contraseña son obligatorios' });
         }
         
-          const [usuarios] = await sequelize.query(sql`SELECT idusuarios, rol_idrol, password FROM USUARIOS WHERE ${correo_electronico} = correo_electronico
+          const [usuarios] = await sequelize.query(sql`SELECT idusuarios, nombre_completo, rol_idrol, password FROM USUARIOS WHERE ${correo_electronico} = correo_electronico
           `);
           
           if (usuarios.length === 0) {     //Valida si se encontro el usuario

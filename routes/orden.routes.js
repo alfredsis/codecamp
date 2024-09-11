@@ -4,9 +4,9 @@ const { validarRol } = require('../middleware/rolAuth');
 const { getOrdenes, getOrdenById, crearOrden, updateOrden } = require('../controllers/ordenes.controller');
 const router = express.Router();
 
-router.get("/ordenes", checkAuth, validarRol(['admin']),  getOrdenes);
+router.get("/ordenes", checkAuth, validarRol(['admin', 'cliente']),  getOrdenes);
 
-router.get("/ordenes/:id", checkAuth, validarRol(['admin']), getOrdenById);
+router.get("/ordenes/:id", checkAuth, validarRol(['admin','cliente']), getOrdenById);
 
 router.post("/ordenes", checkAuth, validarRol(['admin', 'cliente']), crearOrden);
 

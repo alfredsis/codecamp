@@ -5,9 +5,9 @@ const { checkAuth } = require('../middleware/auth');
 const { validarRol } = require('../middleware/rolAuth');
 
 
-router.get("/productos",  checkAuth, validarRol(['admin']), getProducts);
+router.get("/productos",  checkAuth, validarRol(['admin', 'cliente']), getProducts);
 
-router.get("/productos/:id",  checkAuth, validarRol(['admin']),  getProductById);
+router.get("/productos/:id",  checkAuth, validarRol(['admin', 'cliente']),  getProductById);
 
 router.post("/productos", checkAuth, validarRol(['admin']), createProduct);
 
